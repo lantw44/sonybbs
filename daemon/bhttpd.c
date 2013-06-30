@@ -34,7 +34,7 @@
   http://my.domain/img?filename                顯示圖檔
   http://my.domain/rss?brdname                 各看板的RSS Feed
   http://my.domain/class?folder                列出分類中 [folder] 這個卷宗下的所有看板
-  http://my.domain/robot.txt                   Robot Exclusion
+  http://my.domain/robots.txt                  Robot Exclusion
 
 #endif
 
@@ -942,12 +942,16 @@ out_title(fpw, title)
   /* html 檔案開始 */
   fprintf(fpw, "\r\n<HTML><HEAD>\n"
     "<meta http-equiv=Content-Type content=\"text/html; charset=" MYCHARSET "\">\n"
+#ifdef ROBOT_EXCLUSION
+    "<meta name=robots content=noindex,nofollow>\n"
+#endif
     "<title>-=" BBSNAME "=- %s</title>\n", title);
 
-  fputs("<script language=javascript>\n"
+  fputs("<script type=text/javascript>\n<!--\n"
     "  function mOver(obj) {obj.bgColor='" HCOLOR_BAR "';}\n"
     "  function mOut(obj) {obj.bgColor='" HCOLOR_BG "';}\n"
-    "</script>\n<style type=text/css>\n"
+    "-->\n</script>\n"
+    "<style type=text/css>\n"
     "  PRE {font-size: 15pt; line-height: 15pt; font-weight: lighter; background-color: #000000; color: #C0C0C0;}\n"
     "  TD  {font-size: 15pt; line-height: 15pt; font-weight: lighter;}\n"
     "</style>\n"
@@ -1919,7 +1923,7 @@ postlist_list(fpw, folder, brdname, start, total)
 {
   HDR hdr;
   char owner[80], *ptr1, *ptr2;
-  int fd;
+  int fd, xmode;
 
   fputs("<table cellspacing=0 cellpadding=4 border=0>\n<tr bgcolor=" HCOLOR_TIE ">\n"
     "  <td width=15>標</td>\n"
@@ -1968,14 +1972,13 @@ postlist_list(fpw, folder, brdname, start, total)
 	  i, hdr.chrono, i, hdr.chrono);
       }
 
-      if (hdr.xmode & POST_BOTTOM)
-	fputs("  <td>重要</td>\n", fpw);
-      else
-	fprintf(fpw, "  <td>%d</td>\n", i);
-      fprintf(fpw, "  <td>%s</td>\n  <td>", hdr.xmode & POST_MARKED ? "m" : "");
+      xmode = hdr.xmode;
+
+      fprintf(fpw, "  <td>%d</td>\n  <td>%s</td>\n  <td>",
+	xmode & POST_BOTTOM ? -1 : i, xmode & POST_MARKED ? "m" : "");
 
 #ifdef HAVE_SCORE
-      if (hdr.xmode & POST_SCORE)
+      if (xmode & POST_SCORE)
 	fprintf(fpw, "<font color='%s'>%d</font>", hdr.score >= 0 ? "red" : "green", abs(hdr.score));
 #endif
 
@@ -2027,7 +2030,7 @@ postlist_neck(fpw, start, total, brdname)
     "  <td width=20%% align=center><a href=/brdlist>看板列表</a>&nbsp;"
     "<a href=/rss?%s><img border=0 src=/img?xml.gif alt=\"RSS 訂閱\這個看板\"></a></td>\n"
     "</tr></table><br>\n",
-    brdname, brdname, brdname, brdname);
+    brdname, brdname, brdname);
 }
 
 
@@ -2192,21 +2195,21 @@ cmd_gemlist(ap)
 	"  <td>%d</td>\n", i);
       if (hdr.xmode & GEM_RESTRICT)
       {
-	fputs("  <td>[唯讀] 資料保密</td>\n</tr>\n", fpw);
+	fputs("  <td>◇ 資料保密</td>\n</tr>\n", fpw);
       }
       else if (hdr.xname[0] == 'A')	/* 文章 */
       {
-	fprintf(fpw, "  <td><a href=/gmore?%s&%s&%d>[文章] %s</a></td>\n</tr>\n",
+	fprintf(fpw, "  <td><a href=/gmore?%s&%s&%d>◇ %s</a></td>\n</tr>\n",
 	  brdname, xname, i, str_html(hdr.title, TTLEN));
       }
       else if (hdr.xname[0] == 'F')	/* 卷宗 */
       {
-	fprintf(fpw, "  <td><a href=/gem?%s&%s>[卷宗] %s</a></td>\n</tr>\n",
+	fprintf(fpw, "  <td><a href=/gem?%s&%s>◆ %s</a></td>\n</tr>\n",
 	  brdname, hdr.xname, str_html(hdr.title, TTLEN));
       }
       else				/* 其他類別就不秀了 */
       {
-	fputs("  <td>[唯讀] 其他資料</td>\n</tr>\n", fpw);
+	fputs("  <td>◇ 其他資料</td>\n</tr>\n", fpw);
       }
 
       i++;
@@ -2894,7 +2897,7 @@ valid_path(str)
   int ch;
 
   if (!*str)
-    return;
+    return 0;
 
   while (ch = *str++)
   {
@@ -2941,7 +2944,7 @@ cmd_image(ap)
     return HS_NOTMOIDIFY;
 
   fpw = out_http(ap, HS_OK, ptr);
-  fprintf(fpw, "Content-Length: %d\r\n", st.st_size);
+  fprintf(fpw, "Content-Length: %ld\r\n", st.st_size);
   fprintf(fpw, "Last-Modified: %s\r\n\r\n", Gtime(&st.st_mtime));
   f_suck(fpw, fpath);
 
@@ -3083,12 +3086,12 @@ cmd_rss(ap)
 
 #ifdef ROBOT_EXCLUSION
 static int
-cmd_robot(ap)
+cmd_robots(ap)
   Agent *ap;
 {
   FILE *fpw = out_http(ap, HS_OK, NULL);
 
-  fprintf(fpw, "Content-Length: 28\r\n");	/* robot.txt 的長度 */
+  fprintf(fpw, "Content-Length: 28\r\n");	/* robots.txt 的長度 */
   fprintf(fpw, "Last-Modified: Sat, 01 Jan 2000 00:02:21 GMT\r\n\r\n");	/* 隨便給個時間 */
 
   fprintf(fpw, "User-agent: *\r\nDisallow: /\r\n");
@@ -3183,10 +3186,10 @@ static Command cmd_table_get[] =
   cmd_rss,         "rss",       3,
 
 #ifdef ROBOT_EXCLUSION
-  cmd_robot,       "robot.txt", 9,
+  cmd_robots,      "robots.txt",9,
 #endif
 
-  cmd_mainpage,    "",          0,
+  cmd_mainpage,    "\0",        1,
 
   NULL,            NULL,        0
 };
@@ -3463,7 +3466,15 @@ do_cmd(ap, str, end, mode)
     {
       /* 分析 Cookie */
       if (!str_ncmp(str, "Cookie: user=", 13))
+      {
 	str_ncpy(ap->cookie, str + 13, LEN_COOKIE);
+      }
+      else if (!str_ncmp(str, "Cookie: ", 8))	/* waynesan.081018: 修正多 cookie 的狀況 */
+      {
+	char *user;
+	if (user = strstr(str, "user="))
+	  str_ncpy(ap->cookie, user + 5, LEN_COOKIE);
+      }
 
       /* 分析 If-Modified-Since */
       if ((mode & AM_GET) && !str_ncmp(str, "If-Modified-Since: ", 19))	/* str 格式為 If-Modified-Since: Sat, 29 Oct 1994 19:43:31 GMT */
@@ -3493,10 +3504,10 @@ do_cmd(ap, str, end, mode)
 	  break;
       }
 
-      /* 如果在 command_table 裡面找不到，那麼自動重新導向 */
+      /* waynesan.081018: 如果在 command_table 裡面找不到，那麼送 404 Not Found */
       if (!ptr)
       {
-	out_http(ap, HS_REDIRECT, NULL);
+	out_error(ap, HS_NOTFOUND);
 	return -1;
       }
 
@@ -3682,16 +3693,16 @@ servo_usage()
     " system time: %.6f\n"
     " maximum resident set size: %lu P\n"
     " integral resident set size: %lu\n"
-    " page faults not requiring physical I/O: %d\n"
-    " page faults requiring physical I/O: %d\n"
-    " swaps: %d\n"
-    " block input operations: %d\n"
-    " block output operations: %d\n"
-    " messages sent: %d\n"
-    " messages received: %d\n"
-    " signals received: %d\n"
-    " voluntary context switches: %d\n"
-    " involuntary context switches: %d\n",
+    " page faults not requiring physical I/O: %ld\n"
+    " page faults requiring physical I/O: %ld\n"
+    " swaps: %ld\n"
+    " block input operations: %ld\n"
+    " block output operations: %ld\n"
+    " messages sent: %ld\n"
+    " messages received: %ld\n"
+    " signals received: %ld\n"
+    " voluntary context switches: %ld\n"
+    " involuntary context switches: %ld\n",
 
     (double)ru.ru_utime.tv_sec + (double)ru.ru_utime.tv_usec / 1000000.0,
     (double)ru.ru_stime.tv_sec + (double)ru.ru_stime.tv_usec / 1000000.0,

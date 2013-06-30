@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <time.h>
 
 
@@ -29,26 +30,6 @@ Btime(clock)	/* BBS 時間格式 */
   return (datemsg);
 }
 
-char *
-Bdifftime(sec)
-	int sec;
-{
-	char *buf;
-
-	int days, hours, minutes;
-
-	days = sec / (60 * 60 * 24);
-	sec %= (60 * 60 * 24);
-
-  hours = sec / (60 * 60);
-	sec %= (60 * 60);
-
-	minutes = sec / 60;
-	sec %= 60;
-
-	sprintf (buf, "%d 日 %d 時 %d 分 %d 秒", days, hours, minutes, sec);
-	return buf;
-}
 
 char *
 Now()

@@ -60,7 +60,7 @@ total_money()			/* 是否有下注 */
 }
 
 
-static int
+static void
 run(step, last, freq)
   int step;		/* 位置 */
   int last;		/* 1: 最後一步  0: 中間步 */
@@ -178,6 +178,8 @@ get_dst(item)		/* 傳入中的項目選取最後停留的位置 */
     if (bar[dst] == item)
       return dst;
   }
+
+  return 0;
 }
 
 

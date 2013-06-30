@@ -280,14 +280,14 @@ foolme:
 int 
 guessNum()
 {
-  mainNum(0);
+  return mainNum(0);
 }
 
 
 int 
 fightNum()
 {
-  mainNum(1);
+  return mainNum(1);
 }
 
 #endif	/* HAVE_GAME */

@@ -172,38 +172,16 @@ deal_sover(bntp)
 
   if (bntp->chrono > 0)		/* 新信 */
   {
-		int fd;
-		char folder[64];
-		HDR hdr;
-
     mtime = bntp->chrono;
-		brd_fpath(folder, board, FN_DIR);
-		if ((fd = open(folder, O_RDONLY)) >=0)
-		{
-			while (read(fd, &hdr, sizeof(HDR)) == sizeof(HDR))
-			{
-				if (mtime == hdr.chrono)
-				{
-					if (hdr.xmode & POST_RESTRICT)
-					{
-						close(fd);
-						return;
-					}
-					break;
-				}
-			}
-			close(fd);
-		}
-
     str_ncpy(sover.title, bntp->title, sizeof(sover.title));
-    sprintf(sover.msgid, "%s$%s@" MYHOSTNAME, filename, board);
+    sprintf(sover.msgid, "%s$%s@" MYHOSTNAME, board, filename);
   }
   else				/* cancel */
   {
     time(&mtime);
-    sprintf(buf, "%s$%s@" MYHOSTNAME, filename, board);		/* 欲砍文章的 Message-ID */
+    sprintf(buf, "%s$%s@" MYHOSTNAME, board, filename);		/* 欲砍文章的 Message-ID */
     sprintf(sover.title, "cmsg cancel <%s>", buf);
-    sprintf(sover.msgid, "C%s$%s@" MYHOSTNAME, filename, board);/* LHD.030628: 在原 msgid 加任意字串當作 cmsg 的 Message-ID */
+    sprintf(sover.msgid, "C%s$%s@" MYHOSTNAME, board, filename);/* LHD.030628: 在原 msgid 加任意字串當作 cmsg 的 Message-ID */
     sprintf(sover.control, "cancel <%s>", buf);
   }
 
@@ -571,27 +549,37 @@ send_outgoing(node, sover)
 /*-------------------------------------------------------*/
 
 
-static int
-NNRPgroup(newsgroup)	/* 切換 group，並傳回 high number */
+static int		/* 1:成功 0:失敗 */
+NNRPgroup(newsgroup, low, high)	/* 切換 group，並傳回 low-number 及 high-number */
   char *newsgroup;
+  int *low, *high;
 {
-  int high;
+  int i;
   char *ptr;
 
   if (tcpcommand("GROUP %s", newsgroup) != NNTP_GROUPOK_VAL)
-    return -1;
+    return 0;
 
   ptr = SERVERbuffer;
-  for (high = 0; high < 3; high++)	/* 找第三個 ' ' */
+
+  /* 找 SERVERbuffer 的第二個 ' ' */
+  for (i = 0; i < 2; i++)
   {
     ptr++;
     if (!*ptr || !(ptr = strchr(ptr, ' ')))
-      return -1;
+      return 0;
   }
+  if ((i = atoi(ptr + 1)) >= 0)
+    *low = i;
 
-  if ((high = atoi(ptr + 1)) >= 0)
-    return high;
-  return -1;
+  /* 找 SERVERbuffer 的第三個 ' ' */
+  ptr++;
+  if (!*ptr || !(ptr = strchr(ptr, ' ')))
+    return 0;
+  if ((i = atoi(ptr + 1)) >= 0)
+    *high = i;
+
+  return 1;
 }
 
 
@@ -699,7 +687,7 @@ my_post()
 
 
 /*-------------------------------------------------------*/
-/* 更新 high number					 */
+/* 更新 high-number					 */
 /*-------------------------------------------------------*/
 
 
@@ -748,7 +736,7 @@ static void
 readnews(node)
   nodelist_t *node;
 {
-  int i, high, artcount, artno;
+  int i, low, high, artcount, artno;
   char *name, *newsgroup;
   newsfeeds_t *nf;
 
@@ -765,29 +753,36 @@ readnews(node)
 
     DEBUG(("│┌<readnews> 進入 %s\n", newsgroup));
 
-    /* 取得 news server 上的 high */
-    if ((high = NNRPgroup(newsgroup)) < 0)
+    /* 取得 news server 上的 low-number 及 high-number */
+    if (!NNRPgroup(newsgroup, &low, &high))
     {
       updaterc(nf, i, -1);
-      DEBUG(("│└<readnews> 無法取得此群組的 high-number 或此群組不存在\n"));
-      continue;
+      DEBUG(("│└<readnews> 無法取得此群組的 low-number 及 high-number 或此群組不存在\n"));
+      continue;		/* 此群組不存在，輪下一個群組 */
     }
 
     if (ResetActive)
     {
-      if (nf->high != high)
+      if (nf->high != high || nf->xmode & INN_ERROR)
         updaterc(nf, i, high);
-      DEBUG(("│└<readnews> 結束 %s，此群組之 high-number 已更新\n", newsgroup));
+      DEBUG(("│└<readnews> 結束 %s，此群組之 high-number 已與伺服器同步\n", newsgroup));
       continue;		/* 若 ResetActive 則不取信，輪下一個群組 */
     }
 
     if (nf->high >= high)
     {
-      if (nf->high > high)	/* server re-number */
+      if (nf->high > high || nf->xmode & INN_ERROR)	/* server re-number */
 	updaterc(nf, i, high);
 
       DEBUG(("│└<readnews> 結束 %s，此群組已沒有新文章\n", newsgroup));
       continue;		/* 這群組已沒有新文章，輪下一個群組 */
+    }
+
+    if (nf->high < low - 1)				/* server re-number */
+    {
+      updaterc(nf, i, high);
+      DEBUG(("│└<readnews> 結束 %s，此群組之 high-number 因伺服器異動而更新\n", newsgroup));
+      continue;		/* 這群組變更過 low-number，輪下一個群組 */
     }
 
     /* 取回群組上第 nf->high + 1 開始的 MaxArts 篇的文章 */

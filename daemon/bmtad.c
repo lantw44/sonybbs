@@ -62,7 +62,7 @@
 
 
 #define SPAM_MHOST_LIMIT	1000	/* 同一個 @host 寄進來超過 1000 封信，就將此 @host 視為廣告商 */
-#define SPAM_MFROM_LIMIT	100	/* 同一個 from 寄進來超過 100 封信，就將此 from 視為廣告商 */
+#define SPAM_MFROM_LIMIT	128	/* 同一個 from 寄進來超過 128 封信，就將此 from 視為廣告商 */
 
 #define SPAM_TITLE_LIMIT	50	/* 同一個標題寄進來超過 50 次就特別記錄 */
 #define SPAM_FORGE_LIMIT	10	/* 同一個 @domain 錯 10 次以上，就認定不是筆誤，而是故意的 */
@@ -1247,7 +1247,6 @@ bbs_brd(ap, data, brdname)	/* itoc.030323: 寄信給看板 */
 
   author = ap->addr;
   title = ap->nick;
-
   sprintf(ap->memo, "%s -> %s", author, brdname);
 
   if (*title)
@@ -2176,7 +2175,7 @@ mta_mail_body:
       score = nrcpt;
       delta = hx->fsize - ap->used;
       if (delta >= -16 && delta <= 16)
-	score +=  SPAM_MFROM_LIMIT >> 5;
+	score +=  SPAM_MFROM_LIMIT >> 6;
       hx->fsize = ap->used;		/* 記錄用這標題的最後一封信之檔案大小 */
     }
     else
@@ -2198,7 +2197,7 @@ mta_mail_body:
 
       /* 如果這個 from 在這次來信和他自己上次來信的標題相同，那麼這個 from 很可能是廣告商 */
       if (he->ttl == hx)
-	score += SPAM_MFROM_LIMIT >> 4;
+	score += SPAM_MFROM_LIMIT >> 5;
       else
 	he->ttl = hx;		/* 記錄這個 from 在這次來信的標題 */
     }
@@ -3198,7 +3197,7 @@ agent_recv(ap)
       MYDOG;
       ap->used = 0;
 
-      sprintf(gtext, "ip:%08x ", ap->ip_addr);
+      sprintf(gtext, "ip:%08lx ", ap->ip_addr);
       str_ncpy(gtext + 3 + 8 + 1, data, 50);
 
       (*cmd->func) (ap);
@@ -3366,16 +3365,17 @@ servo_usage()
     " system time: %.6f\n"
     " maximum resident set size: %lu P\n"
     " integral resident set size: %lu\n"
-    " page faults not requiring physical I/O: %d\n"
-    " page faults requiring physical I/O: %d\n"
-    " swaps: %d\n"
-    " block input operations: %d\n"
-    " block output operations: %d\n"
-    " messages sent: %d\n"
-    " messages received: %d\n"
-    " signals received: %d\n"
-    " voluntary context switches: %d\n"
-    " involuntary context switches: %d\ngline: %d\ngtext: %s\n",
+    " page faults not requiring physical I/O: %ld\n"
+    " page faults requiring physical I/O: %ld\n"
+    " swaps: %ld\n"
+    " block input operations: %ld\n"
+    " block output operations: %ld\n"
+    " messages sent: %ld\n"
+    " messages received: %ld\n"
+    " signals received: %ld\n"
+    " voluntary context switches: %ld\n"
+    " involuntary context switches: %ld\n"
+    " gline: %d\ngtext: %s\n",
 
     (double) ru.ru_utime.tv_sec + (double) ru.ru_utime.tv_usec / 1000000.0,
     (double) ru.ru_stime.tv_sec + (double) ru.ru_stime.tv_usec / 1000000.0,

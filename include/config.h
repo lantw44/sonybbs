@@ -237,7 +237,7 @@
 
 #define	HAVE_EXTERNAL		/* Xyz 選單 */
 
-#ifdef	HAVE_EXTERNAL
+#ifdef HAVE_EXTERNAL
 #  define HAVE_SONG		/* itoc.010205: 提供點歌功能 */
 #  define HAVE_NETTOOL		/* itoc.010209: 提供網路服務工具 */
 #  define HAVE_GAME		/* itoc.010208: 提供遊戲 */
@@ -373,6 +373,25 @@
 #define	MOVIE_MAX	180		/* 動畫張數 */
 #define	MOVIE_SIZE	(108 * 1024)	/* 動畫 cache size */
 
+#if 0
+/* expire.c 看板自動砍過期文章 */
+
+#define BRD_EXPIRE_DAYS	365		/* 預設清除超過 365 天的文章 */
+#define BRD_EXPIRE_MAXP	5000		/* 預設清除超過 5000 篇的文章 */
+#define BRD_EXPIRE_MINP	500		/* 預設低於 500 篇的看板不砍文章 */
+
+/* reaper.c 自動砍太久沒上站的帳號 */
+
+/* 保留帳號期限 -- 學期中 */
+#define REAPER_DAY_NEWUSR	7	/* 登入不超過三次的使用者保留 7 天 */
+#define REAPER_DAY_FORFUN	120	/* 未完成身分認證的使用者保留 120 天 */
+#define REAPER_DAY_OCCUPY	120	/* 已完成身分認證的使用者保留 120 天 */
+/* 保留帳號期限 -- 暑假 */
+#define REAPER_VAC_NEWUSR	7	/* 登入不超過三次的使用者保留 7 天 */
+#define REAPER_VAC_FORFUN	180	/* 未完成身分認證的使用者保留 180 天 */
+#define REAPER_VAC_OCCUPY	180	/* 已完成身分認證的使用者保留 180 天 */
+
+#endif
 
 /* ----------------------------------------------------- */
 /* chat.c & xchatd.c 中採用的 protocol			 */
@@ -404,7 +423,7 @@
 */
 
 #define MAX_BBSDPORT	1		/* bbsd 要開幾個 port，隨 BBSD_PORT 而變 */
-#define BBSD_PORT	{23}	/* bbsd   所用的 port (bbsd.c) */
+#define BBSD_PORT	{23 /*,3456*/}	/* bbsd   所用的 port (bbsd.c) */
 #define BMTA_PORT	25		/* SMTP   所用的 port (bmtad.c) */
 #define GEMD_PORT	70		/* Gopher 所用的 port (gemd.c) */
 #define FINGER_PORT	79		/* Finger 所用的 port (bguard.c) */
@@ -425,7 +444,7 @@
 #define PIPSHM_KEY	4998	/* 電子雞對戰 */
 
 #define	BSEM_KEY	2000	/* semaphore key */
-#define	BSEM_FLG  0600	/* semaphore mode */
+#define	BSEM_FLG	0600	/* semaphore mode */
 #define BSEM_ENTER      -1	/* enter semaphore */
 #define BSEM_LEAVE      1	/* leave semaphore */
 #define BSEM_RESET	0	/* reset semaphore */

@@ -43,8 +43,8 @@
 
 /* itoc.註解: 注意 MENU_XPOS 要 >= MENU_XNOTE + MOVIE_LINES */
 
-#define MENU_XNOTE	1		/* 動態看板由 (2, 0) 開始 */
-#define MOVIE_LINES	12		/* 動畫最多有 10 列 */
+#define MENU_XNOTE	2		/* 動態看板由 (2, 0) 開始 */
+#define MOVIE_LINES	10		/* 動畫最多有 10 列 */
 
 #define MENU_XPOS	13		/* 選單開始的 (x, y) 座標 */
 #define MENU_YPOS	((d_cols >> 1) + 18)
@@ -78,8 +78,8 @@
 #define NECKER_BMW	"[←]離開 [d]刪除 [D]區段刪除 [m]寄信 [M]儲存 [w]水球 [s]更新 [→]查詢 [h]說明\n" \
 			COLOR3 "  編號 代  號       內       容%*s                                          時間 \033[m"
 
-#define NECKER_MF	"[←]離開 [→]進入 [W]查詢 [m]移動 [h]說明\n" \
-			COLOR3 "  %s   看  板       類別轉信 中   文   敘   述%*s               人 板    主%*s    \033[m"
+#define NECKER_MF	"[←]離開 [→]進入 [^P]新增 [d]刪除 [c]切換 [C]複製 [^V]貼上 [m]移動 [W]查詢\n" \
+			COLOR3 "  %s   看  板       類別轉信中   文   敘   述%*s              人氣 板    主%*s    \033[m"
 
 #define NECKER_COSIGN	"[←]離開 [→]閱\讀 [^P]申請 [d]刪除 [o]開板 [h]說明\n" \
 			COLOR3 "  編號   日 期  舉辦人       看  板  標  題%*s                                   \033[m"

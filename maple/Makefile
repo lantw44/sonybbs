@@ -12,6 +12,8 @@
 # ------------------------------------------------------ #
 
 
+CC =	gcc
+
 SRC =	acct.c bbsd.c bmw.c board.c cache.c edit.c favor.c \
 	gem.c mail.c menu.c more.c pal.c post.c talk.c ulist.c \
 	user.c visio.c window.c xover.c xpost.c
@@ -34,25 +36,25 @@ all:
 	@echo " make cygwin  : for Microsoft Windows and Cygwin gcc"
 
 sun:
-	@$(MAKE) CC=gcc CFLAGS="-O2 -pipe -fomit-frame-pointer -Wunused -I../include" LDFLAGS="-s -L../lib -ldao" $(EXE)
+	@$(MAKE) CFLAGS="-O2 -pipe -fomit-frame-pointer -Wunused -Wno-unused-result -Wno-parentheses -I../include" LDFLAGS="-s -L../lib -ldao" $(EXE)
 
 linux:
-	@$(MAKE) CC=gcc CFLAGS="-DLINUX -O2 -pipe -fomit-frame-pointer -Wunused -I../include" LDFLAGS="-s -L../lib -ldao -lcrypt -lresolv -ldl -rdynamic" $(EXE)
+	@$(MAKE) CFLAGS="-DLINUX -O2 -pipe -fomit-frame-pointer -Wunused -Wno-unused-result -Wno-parentheses -I../include" LDFLAGS="-s -L../lib -ldao -lcrypt -lresolv -ldl -rdynamic" $(EXE)
 
 solaris:
-	@$(MAKE) CC=gcc CFLAGS="-DSOLARIS -DSYSV -O2 -pipe -fomit-frame-pointer -Wunused -I../include" LDFLAGS="-s -L../lib -ldao -ltermcap -lsocket -lnsl -lresolv -lelf -ldl" $(EXE)
+	@$(MAKE) CFLAGS="-DSOLARIS -DSYSV -O2 -pipe -fomit-frame-pointer -Wunused -Wno-unused-result -Wno-parentheses -I../include" LDFLAGS="-s -L../lib -ldao -ltermcap -lsocket -lnsl -lresolv -lelf -ldl" $(EXE)
 
 sol-x86:
-	@$(MAKE) CC=gcc CFLAGS="-DSOLARIS -DSYSV -O2 -fomit-frame-pointer -Wunused -I../include" LDFLAGS="-s -L../lib -ldao -ltermcap -lsocket -lnsl -lresolv -lelf -ldl" $(EXE)
+	@$(MAKE) CFLAGS="-DSOLARIS -DSYSV -O2 -fomit-frame-pointer -Wunused -Wno-unused-result -Wno-parentheses -I../include" LDFLAGS="-s -L../lib -ldao -ltermcap -lsocket -lnsl -lresolv -lelf -ldl" $(EXE)
 
 freebsd:
-	@$(MAKE) CC=gcc CFLAGS="-DBSD44 -O2 -pipe -fomit-frame-pointer -Wunused -I../include" LDFLAGS="-s -L../lib -ldao -lcrypt -export-dynamic" $(EXE)
+	@$(MAKE) CFLAGS="-DBSD44 -O2 -pipe -fomit-frame-pointer -Wunused -Wno-unused-result -Wno-parentheses -I../include" LDFLAGS="-s -L../lib -ldao -lcrypt -Wl,--export-dynamic" $(EXE)
 
 bsd:
-	@$(MAKE) CC=gcc CFLAGS="-DBSD44 -O2 -pipe -fomit-frame-pointer -Wunused -I../include" LDFLAGS="-s -L../lib -ldao" $(EXE)
+	@$(MAKE) CFLAGS="-DBSD44 -O2 -pipe -fomit-frame-pointer -Wunused -Wno-unused-result -Wno-parentheses -I../include" LDFLAGS="-s -L../lib -ldao" $(EXE)
 
 cygwin:
-	@$(MAKE) CC=gcc CFLAGS="-DLINUX -DCYGWIN -O2 -pipe -fomit-frame-pointer -Wunused -I../include" LDFLAGS="-s -L../lib -ldao -lcrypt -lresolv -lcygipc" $(EXE)
+	@$(MAKE) CFLAGS="-DLINUX -DCYGWIN -O2 -pipe -fomit-frame-pointer -Wunused -I../include" LDFLAGS="-s -L../lib -ldao -lcrypt -lresolv -lcygipc" $(EXE)
 
 
 bbsd: $(OBJ)

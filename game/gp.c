@@ -362,6 +362,8 @@ gp_win(my, cpu)
     ret = cpuX - myX;
   else if (myY != cpuY)
     ret = cpuY - myY;
+  else
+    ret = -1;
 
   if (ret < 0)		/* ¦pªGª±®aÄ¹µP */
   {
