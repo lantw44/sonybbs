@@ -104,8 +104,13 @@ main(argc, argv)
     usr_fpath(fpath, argv[i], FN_ACCT);
     if (rec_get(fpath, &acct, sizeof(ACCT), 0) < 0)
     {
-      printf("%s: read error (maybe no such id?)\n", argv[i]);
-      continue;
+      usr_deleted_fpath(fpath, argv[i], FN_ACCT);
+      if (rec_get(fpath, &acct, sizeof(ACCT), 0) < 0)
+      {
+        printf("%s: read error (maybe no such id?)\n", argv[i]);
+        continue;
+      }
+      printf("\033[1;33m警告:\033[m 帳號 %s 已被刪除\n", argv[i]);
     }
 
     showACCT(&acct);

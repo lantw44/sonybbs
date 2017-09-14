@@ -84,3 +84,18 @@ usr_fpath(fpath, user, fname)
   *fpath++ = *buf;
   mak_fpath(fpath, buf, fname);
 }
+
+
+void
+usr_deleted_fpath(fpath, user, fname)
+  char *fpath;
+  char *user;
+  char *fname;
+{
+  *fpath++ = 'u';
+  *fpath++ = 's';
+  *fpath++ = 'r';
+  *fpath++ = '/';
+  *fpath++ = '@';
+  mak_fpath(fpath, user, fname);
+}

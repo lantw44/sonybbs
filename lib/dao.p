@@ -102,6 +102,7 @@ FILE *f_new(char *fold, char *fnew);
 void brd_fpath(char *fpath, char *board, char *fname);
 void gem_fpath(char *fpath, char *board, char *fname);
 void usr_fpath(char *fpath, char *user, char *fname);
+void usr_deleted_fpath(char *fpath, char *user, char *fname);
 /* f_rm.c */
 int f_rm(char *fpath);
 /* f_suck.c */
