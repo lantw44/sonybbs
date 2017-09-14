@@ -1502,7 +1502,8 @@ ve_banner(fp, modify)		/* 加上來源等訊息 */
   int modify;			/* 1:修改 0:原文 */
 {
 		/* chitsaou: IP 功能 */
-    char name[40], fqdn[40], ipaddr[40];
+    /* FIXME: lantw44: 我們需要邊界檢查啊！*/
+    char name[256], fqdn[256], ipaddr[256];
     unsigned long sum;
     unsigned long base[4]={16777216,65536,256,1};
     int i, ip[4];

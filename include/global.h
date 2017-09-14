@@ -433,7 +433,8 @@ VAR int b_lines;		/* bottom line */
 VAR int b_cols;			/* bottom columns */
 VAR int d_cols;			/* difference columns from standard */
 
-VAR char fromhost[48];		/* from FQDN */
+/* FIXME: lantw44: 暫時避免問題的方法，這不是解決辦法！*/
+VAR char fromhost[256];		/* from FQDN */
 
 VAR char ve_title[80];		/* edited title */
 VAR char quote_file[80];

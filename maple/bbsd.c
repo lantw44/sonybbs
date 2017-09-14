@@ -577,7 +577,7 @@ utmp_setup(mode)
 		 * 如果把 140.112. 寫入 etc/host 中，就不用把 ntu.edu.tw *
 		 * 重覆寫入 etc/fqdn 裡了                                */
 
-		char name[48];
+		char name[256];
 
 		/* 先比對 ID */
 		str_lower(name, cuser.userid);
