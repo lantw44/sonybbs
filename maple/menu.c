@@ -273,8 +273,9 @@ vs_head(title, mid)
 
   spc = 2 + len - spc;
   len = 1 - spc & 1;
-  memset(buf, ' ', spc >>= 1);
-  buf[spc] = '\0';
+  memset(buf, ' ', sizeof(buf));
+  spc >>= 1;
+  buf[spc >= sizeof(buf) ? sizeof(buf) : spc] = '\0';
 
 #ifdef COLOR_HEADER
   spc = (time(0) % 7) + '1';
