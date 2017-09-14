@@ -1159,14 +1159,12 @@ tn_main()
 		login_abort("\n貴機器於不被敝站接受");
 #endif
 
-
-		/*
-    outs("關站，預計十分鐘後恢復\n造成您的困擾深感抱歉");
+/*
+    outs("系統維護中\n\n造成您的困擾深感抱歉<(_ _)>");
 		if (vkey() != 'm' || vkey() != 'p' || vkey() != '6' || vkey() != '0' || vkey() != '7')
 		login_abort("\n關站維修，再見");
+*/
 	  move(0, 0);
-    */
-
 	time(&ap_start);
 
 	time_t now = time(NULL);
