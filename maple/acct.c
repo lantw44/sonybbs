@@ -578,7 +578,7 @@ acct_setup(u, adm)
 	int year;
   do
   {
-    sprintf(buf, "生日－民國 %02d 年：", u->year);
+    sprintf(buf, "生日－民國 %03d 年：", u->year);
     if (!vget(i, 0, buf, buf, 4, DOECHO))
       break;
     year = atoi(buf);
