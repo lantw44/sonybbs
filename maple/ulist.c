@@ -925,13 +925,14 @@ ulist_edit(xo)			/* Thor: 可線上查看及修改使用者 */
   char* userid=ulist_pool[xo->pos]->userid;
   char* realid=ulist_pool[xo->pos]->realid;
   char buf[80];
-  if(strcmp(userid,realid)){
-    sprintf(buf,"改ID 權限：%s → %s",realid,userid);
-    vmsg(buf);
-  }
 
   if (!HAS_PERM(PERM_ALLACCT) || acct_load(&acct, ulist_pool[xo->pos]->realid) < 0)
     return XO_NONE;
+
+  if (strcmp(userid, realid)){
+    sprintf(buf, "改ID 權限：%s → %s", realid, userid);
+    vmsg(buf);
+  }
 
   vs_bar("使用者設定");
   acct_setup(&acct, 1);
