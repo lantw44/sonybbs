@@ -585,8 +585,8 @@ acct_setup(u, adm)
   } while (year <= 0 || year >= 256 /*|| x.year > 99*/);
 	x.year=year;
 
-	if (((x.year + 1991) % 400 == 0) ||
-			((x.year + 1991) % 100 != 0 && (x.year + 1991) % 4 == 0))
+	if (((x.year + 1911) % 400 == 0) ||
+			((x.year + 1911) % 100 != 0 && (x.year + 1911) % 4 == 0))
 		mmday[1]=29;
 
   do
