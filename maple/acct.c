@@ -575,7 +575,7 @@ acct_setup(u, adm)
 
   /* itoc.010408: 新增生日/性別欄位，不強迫使用者填 (允許填 0) */
   i++;
-	int year;
+	int year = x.year;
   do
   {
     sprintf(buf, "生日－民國 %03d 年：", u->year);
