@@ -2356,7 +2356,7 @@ post_redir(xo)
   {
     if (is_bm(blist, cuser.userid) != 1)  /* 只有正板主可以 */
     {
-      vmsg("只有正版主可以重建看板索引");
+      vmsg("只有正板主可以重建看板索引");
       return XO_NONE;
     }
   }
@@ -2411,7 +2411,7 @@ char *blist;
 			if(!HAS_PERM(PERM_ALLADMIN) || strcmp(brd->class,"站務")){
 			    if (is_bm(blist, cuser.userid) != 1)  /* 只有正板主可以 */
 						    {
-									      vmsg("只有正版主可以移動文章");
+									      vmsg("只有正板主可以移動文章");
 												      return;
 								}
 			}
