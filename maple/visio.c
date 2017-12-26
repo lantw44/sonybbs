@@ -646,7 +646,7 @@ outc(ch)
   uschar *data;
   int i, cy, pos;
 
-  static char ansibuf[16] = "\033";
+  static char ansibuf[64] = "\033";
   static int ansipos = 0;
 
   slp = cur_slp;
@@ -720,7 +720,7 @@ new_line:
 
   if (i = ansipos)
   {
-    if ((i < 15) &&
+    if ((i < 63) &&
       ((ch >= '0' && ch <= '9') || ch == '[' || ch == 'm' || ch == ';'))
     {
       ansibuf[i++] = ch;
@@ -860,7 +860,7 @@ void
 prints(char *fmt, ...)
 {
   va_list args;
-  uschar buf[512], *str;	/* 最長只能印 512 字 */
+  uschar buf[8192], *str;	/* 最長只能印 8192 字 */
   int cc;
 
   va_start(args, fmt);

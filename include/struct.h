@@ -14,7 +14,7 @@
 /* screen control */
 
 #define STRLEN		80	/* Length of most string data */
-#define ANSILINELEN	250	/* Maximum Screen width in chars */
+#define ANSILINELEN	4000	/* Maximum Screen width in chars */
 
 /* itoc.031123: 螢幕的寬度設為 80 也無妨，只是有些 telnet term 在貼上文字太長時，
                 會自動斷行在 79，所以在此就從其設定 */
@@ -535,14 +535,14 @@ typedef struct
 
 typedef struct screenline
 {
-  uschar oldlen;		/* previous line length */
-  uschar len;			/* current length of line */
-  uschar width;			/* padding length of ANSI codes */
-  uschar smod;			/* start of modified data */
-  uschar emod;			/* end of modified data */
-  uschar sso;			/* start of standout data */
-  uschar eso;			/* end of standout data */
-  uschar mode;			/* status of line, as far as update */
+  usint oldlen;			/* previous line length */
+  usint len;			/* current length of line */
+  usint width;			/* padding length of ANSI codes */
+  usint smod;			/* start of modified data */
+  usint emod;			/* end of modified data */
+  usint sso;			/* start of standout data */
+  usint eso;			/* end of standout data */
+  usint mode;			/* status of line, as far as update */
   uschar data[ANSILINELEN];
 }          screenline;
 
