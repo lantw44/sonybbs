@@ -531,6 +531,7 @@ scan_register_form(fd)
       } while (read(fd, &rform, sizeof(RFORM)) == sizeof(RFORM));
 
     case 'd':
+      alog("§Rµù¥U³æ", userid);
       break;
 
     case 'n':
